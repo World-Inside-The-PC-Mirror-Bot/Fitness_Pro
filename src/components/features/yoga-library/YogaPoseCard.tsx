@@ -14,23 +14,34 @@ export default function YogaPoseCard({ pose }: YogaPoseCardProps) {
       <div className="relative h-64 w-full">
         <Image
           src={pose.imageUrl || "https://placehold.co/400x300.png"}
-          alt={pose.name}
+          alt={pose.sanskritName || pose.name} // Use Sanskrit name for alt if available
           layout="fill"
           objectFit="cover"
-          data-ai-hint={pose.dataAiHint || pose.name.toLowerCase().split(" ").slice(0,2).join(" ")}
+          data-ai-hint={pose.dataAiHint || (pose.sanskritName || pose.name).toLowerCase().split(" ").slice(0,2).join(" ")}
         />
       </div>
       <CardHeader>
         <CardTitle className="text-2xl flex items-center gap-2">
-          <Sparkles className="h-6 w-6 text-primary" /> 
-          {pose.name}
+          <Sparkles className="h-6 w-6 text-primary" />
+          {/* Prioritize Sanskrit name for the title */}
+          {pose.sanskritName || pose.name}
         </CardTitle>
-        {pose.sanskritName && (
-          <CardDescription className="text-primary/80 italic">{pose.sanskritName}</CardDescription>
+        {/* Display English name as a subtitle if Sanskrit name was used as title AND English name exists */}
+        {(pose.sanskritName && pose.name) && (
+          <CardDescription className="text-md text-muted-foreground -mt-0.5">
+            {pose.name}
+          </CardDescription>
+        )}
+        {/* If only English name was available and used as title, this CardDescription shows general pose description */}
+        {(!pose.sanskritName && pose.description) && (
+             <CardDescription className="text-sm text-muted-foreground pt-1">{pose.description.substring(0,100)}{pose.description.length > 100 ? "..." : ""}</CardDescription>
         )}
       </CardHeader>
       <CardContent className="flex-grow space-y-3">
-        <p className="text-muted-foreground text-sm">{pose.description}</p>
+        {/* Display full description here if it wasn't used as a fallback subtitle */}
+        {pose.sanskritName && pose.description && (
+            <p className="text-muted-foreground text-sm">{pose.description}</p>
+        )}
         
         {pose.benefits && pose.benefits.length > 0 && (
           <div>
