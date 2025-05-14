@@ -1,96 +1,45 @@
+
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Calculator, Dumbbell, Flower2, Timer, ArrowRight } from "lucide-react";
+import { ArrowRight, Sparkles } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import type { Metadata } from 'next';
 
-const features = [
-  {
-    title: "BMI Calculator",
-    description: "Calculate your Body Mass Index quickly and accurately.",
-    icon: Calculator,
-    href: "/bmi-calculator",
-    dataAiHint: "health checkup",
-    imgSrc: "https://placehold.co/600x400.png"
-  },
-  {
-    title: "Workout Plans",
-    description: "Get personalized workout plans to achieve your fitness goals.",
-    icon: Dumbbell,
-    href: "/workout-plans",
-    dataAiHint: "gym workout",
-    imgSrc: "https://placehold.co/600x400.png"
-  },
-  {
-    title: "Yoga Library",
-    description: "Explore a variety of yoga poses to improve flexibility and mindfulness.",
-    icon: Flower2,
-    href: "/yoga-library",
-    dataAiHint: "yoga meditation",
-    imgSrc: "https://placehold.co/600x400.png"
-  },
-  {
-    title: "Meditation Timer",
-    description: "Guided meditation sessions to help you relax and find peace.",
-    icon: Timer,
-    href: "/meditation-timer",
-    dataAiHint: "zen garden",
-    imgSrc: "https://placehold.co/600x400.png"
-  },
-];
+export const metadata: Metadata = {
+  title: 'Welcome to FitZenith',
+  description: 'Start your journey to wellness with FitZenith. Your ultimate fitness and mindfulness companion.',
+};
 
-export default function HomePage() {
+export default function WelcomePage() {
   return (
-    <div className="space-y-12">
-      <section className="text-center py-12 bg-gradient-to-r from-primary to-teal-600 rounded-lg shadow-xl">
-        <div className="container mx-auto px-4">
-          <h1 className="text-5xl font-extrabold tracking-tight text-primary-foreground mb-6">
-            Welcome to <span className="drop-shadow-md">FitZenith</span>
+    <div className="flex flex-col items-center justify-center min-h-[calc(100vh-10rem)] text-center px-4">
+      <section className="py-12 md:py-20 rounded-lg shadow-xl bg-gradient-to-br from-primary via-teal-500 to-accent w-full max-w-4xl">
+        <div className="container mx-auto">
+          <Sparkles className="h-16 w-16 text-primary-foreground mx-auto mb-6" />
+          <h1 className="text-5xl md:text-6xl font-extrabold tracking-tight text-primary-foreground mb-6">
+            Welcome to <span className="drop-shadow-lg">FitZenith</span>!
           </h1>
-          <p className="text-xl text-primary-foreground/90 mb-8 max-w-2xl mx-auto">
+          <p className="text-xl md:text-2xl text-primary-foreground/90 mb-10 max-w-3xl mx-auto">
             Your ultimate companion on the journey to a healthier, stronger, and more mindful you.
-            Explore our tools and resources designed to elevate your well-being.
+            Let's get started!
           </p>
-          <Button size="lg" className="bg-accent hover:bg-accent/90 text-accent-foreground" asChild>
-            <Link href="/bmi-calculator">
-              Get Started <ArrowRight className="ml-2 h-5 w-5" />
+          <Button size="lg" className="bg-background text-foreground hover:bg-background/90 text-lg py-3 px-8" asChild>
+            <Link href="/dashboard">
+              Explore Features <ArrowRight className="ml-2 h-5 w-5" />
             </Link>
           </Button>
         </div>
       </section>
-
-      <section className="container mx-auto px-4">
-        <h2 className="text-3xl font-semibold text-center mb-10">Our Features</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {features.map((feature) => (
-            <Card key={feature.title} className="overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 flex flex-col">
-              <div className="relative h-56 w-full">
-                <Image
-                  src={feature.imgSrc}
-                  alt={feature.title}
-                  layout="fill"
-                  objectFit="cover"
-                  data-ai-hint={feature.dataAiHint}
-                />
-              </div>
-              <CardHeader className="flex-row items-center gap-4">
-                <feature.icon className="h-10 w-10 text-primary" />
-                <div>
-                  <CardTitle className="text-2xl">{feature.title}</CardTitle>
-                </div>
-              </CardHeader>
-              <CardContent className="flex-grow">
-                <CardDescription className="text-base mb-4">{feature.description}</CardDescription>
-                <Button variant="outline" className="mt-auto border-primary text-primary hover:bg-primary hover:text-primary-foreground" asChild>
-                  <Link href={feature.href}>
-                    Explore <ArrowRight className="ml-2 h-4 w-4" />
-                  </Link>
-                </Button>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      </section>
+      <div className="mt-12 w-full max-w-4xl">
+        <Image
+          src="https://placehold.co/1200x400.png"
+          alt="Wellness Journey"
+          width={1200}
+          height={400}
+          className="rounded-lg shadow-lg"
+          data-ai-hint="fitness wellness collage"
+        />
+      </div>
     </div>
   );
 }

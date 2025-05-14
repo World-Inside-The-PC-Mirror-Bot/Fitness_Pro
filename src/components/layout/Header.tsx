@@ -1,9 +1,11 @@
+
 import Link from 'next/link';
-import { Activity, Calculator, Dumbbell, Flower2, Timer, HomeIcon } from 'lucide-react'; // Flower2 as substitute for Yoga
+import { Activity, Calculator, Dumbbell, Flower2, Timer, HomeIcon, LayoutDashboard } from 'lucide-react'; // Flower2 as substitute for Yoga
 import { Button } from '@/components/ui/button';
 
 const navItems = [
-  { href: '/', label: 'Home', icon: HomeIcon },
+  { href: '/', label: 'Welcome', icon: HomeIcon },
+  { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { href: '/bmi-calculator', label: 'BMI Calculator', icon: Calculator },
   { href: '/workout-plans', label: 'Workout Plans', icon: Dumbbell },
   { href: '/yoga-library', label: 'Yoga Library', icon: Flower2 },
@@ -18,10 +20,10 @@ export default function Header() {
           <Activity className="h-6 w-6 text-primary" />
           <span className="text-xl font-bold text-primary">FitZenith</span>
         </Link>
-        <nav className="hidden md:flex items-center space-x-2 lg:space-x-4">
+        <nav className="hidden md:flex items-center space-x-1 lg:space-x-2">
           {navItems.map((item) => (
             <Button key={item.label} variant="ghost" asChild>
-              <Link href={item.href} className="flex items-center gap-1.5 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
+              <Link href={item.href} className="flex items-center gap-1.5 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors px-2 lg:px-3">
                 <item.icon className="h-4 w-4" />
                 {item.label}
               </Link>
