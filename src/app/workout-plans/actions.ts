@@ -1,60 +1,92 @@
 'use server';
 
 import type { WorkoutPlan, Exercise } from '@/types';
+import { ALL_EXERCISES_LIST, getExerciseById } from '@/lib/constants';
 
-// Mock AI flow - in a real app, this would call the Genkit flow
+// Helper to select random exercises from a category
+function getRandomExercises(category: string, count: number, availableExercises: Exercise[]): Exercise[] {
+  const categoryExercises = availableExercises.filter(ex => ex.category.toLowerCase() === category.toLowerCase());
+  const shuffled = categoryExercises.sort(() => 0.5 - Math.random());
+  return shuffled.slice(0, count);
+}
+
+// Mock AI flow - uses the centralized ALL_EXERCISES_LIST
 async function mockGenerateWorkoutPlan(goal: string): Promise<WorkoutPlan> {
-  await new Promise(resolve => setTimeout(resolve, 1500)); // Simulate API delay
+  await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate API delay
 
-  const commonExercises: Exercise[] = [
-    { id: 'ex-stretch-1', name: 'Dynamic Warm-up', sets: '1', reps: '5-10 min', imageUrl: 'https://placehold.co/300x200.png', category: 'Warm-up', dataAiHint: 'dynamic stretching' },
-    { id: 'ex-stretch-2', name: 'Cool-down Stretches', sets: '1', reps: '5-10 min', imageUrl: 'https://placehold.co/300x200.png', category: 'Cool-down', dataAiHint: 'static stretching' },
-  ];
-  
-  let planExercises: Exercise[];
+  const warmUp = getExerciseById('ex-stretch-1');
+  const coolDown = getExerciseById('ex-stretch-2');
+  let planExercises: Exercise[] = [];
+  let planName = `AI: ${goal} Focus`;
+  let planDescription = `An AI-generated plan to help you achieve your goal of ${goal}.`;
 
-  if (goal.toLowerCase().includes('weight loss')) {
-    planExercises = [
-      { id: 'ex-wl-1', name: 'Jumping Jacks', sets: '3', reps: '45 sec work, 15 sec rest', imageUrl: 'https://placehold.co/300x200.png', category: 'Cardio', dataAiHint: 'jumping jacks' },
-      { id: 'ex-wl-2', name: 'Burpees', sets: '3', reps: '10-12', imageUrl: 'https://placehold.co/300x200.png', category: 'Full Body', dataAiHint: 'burpee exercise' },
-      { id: 'ex-wl-3', name: 'High Knees', sets: '3', reps: '30 sec work, 15 sec rest', imageUrl: 'https://placehold.co/300x200.png', category: 'Cardio', dataAiHint: 'high knees' },
-      { id: 'ex-wl-4', name: 'Bodyweight Squats', sets: '3', reps: '15-20', imageUrl: 'https://placehold.co/300x200.png', category: 'Legs', dataAiHint: 'bodyweight squat' },
-    ];
-    return {
-      id: `plan-${Date.now()}`,
-      name: `AI Generated: Weight Loss Focus`,
-      goal: 'Weight Loss',
-      description: 'A plan focused on calorie expenditure and cardiovascular health.',
-      exercises: [...commonExercises.slice(0,1), ...planExercises, commonExercises[1]],
-    };
-  } else if (goal.toLowerCase().includes('muscle gain')) {
-    planExercises = [
-      { id: 'ex-mg-1', name: 'Dumbbell Bench Press', sets: '4', reps: '8-10', imageUrl: 'https://placehold.co/300x200.png', category: 'Chest', dataAiHint: 'dumbbell bench press' },
-      { id: 'ex-mg-2', name: 'Pull-ups (or Lat Pulldowns)', sets: '4', reps: '6-10 (or 8-12)', imageUrl: 'https://placehold.co/300x200.png', category: 'Back', dataAiHint: 'pull up bar' },
-      { id: 'ex-mg-3', name: 'Overhead Press', sets: '3', reps: '8-10', imageUrl: 'https://placehold.co/300x200.png', category: 'Shoulders', dataAiHint: 'overhead press barbell' },
-      { id: 'ex-mg-4', name: 'Barbell Squats', sets: '4', reps: '6-8', imageUrl: 'https://placehold.co/300x200.png', category: 'Legs', dataAiHint: 'barbell squat rack' },
-    ];
-    return {
-      id: `plan-${Date.now()}`,
-      name: `AI Generated: Muscle Gain Focus`,
-      goal: 'Muscle Gain',
-      description: 'A plan focused on progressive overload and strength building.',
-      exercises: [...commonExercises.slice(0,1), ...planExercises, commonExercises[1]],
-    };
-  } else {
-     planExercises = [
-      { id: 'ex-gf-1', name: 'Kettlebell Swings', sets: '3', reps: '15-20', imageUrl: 'https://placehold.co/300x200.png', category: 'Full Body', dataAiHint: 'kettlebell swing' },
-      { id: 'ex-gf-2', name: 'Lunges', sets: '3', reps: '10-12 per leg', imageUrl: 'https://placehold.co/300x200.png', category: 'Legs', dataAiHint: 'dumbbell lunge' },
-      { id: 'ex-gf-3', name: 'Plank Rows', sets: '3', reps: '8-10 per arm', imageUrl: 'https://placehold.co/300x200.png', category: 'Core/Back', dataAiHint: 'plank row dumbbell' },
-    ];
-    return {
-      id: `plan-${Date.now()}`,
-      name: `AI Generated: General Fitness`,
-      goal: 'General Fitness',
-      description: 'A well-rounded plan for overall health and conditioning.',
-      exercises: [...commonExercises.slice(0,1), ...planExercises, commonExercises[1]],
-    };
+  if (!warmUp || !coolDown) {
+    throw new Error("Warm-up or cool-down exercise not found in the central list.");
   }
+
+  switch (goal.toLowerCase()) {
+    case 'weight loss':
+      planExercises = [
+        ...getRandomExercises('Cardio', 2, ALL_EXERCISES_LIST),
+        ...getRandomExercises('Full Body', 1, ALL_EXERCISES_LIST),
+        ...getRandomExercises('Legs', 1, ALL_EXERCISES_LIST),
+      ];
+      planName = `AI Generated: Weight Loss Focus`;
+      planDescription = 'A plan focused on calorie expenditure and cardiovascular health.';
+      break;
+    case 'muscle gain':
+      planExercises = [
+        getRandomExercises('Chest', 1, ALL_EXERCISES_LIST)[0] || ALL_EXERCISES_LIST.find(ex => ex.id === 'ex-strength-2')!, // Dumbbell Bench Press
+        getRandomExercises('Back', 1, ALL_EXERCISES_LIST)[0] || ALL_EXERCISES_LIST.find(ex => ex.id === 'ex-strength-3')!, // Pull-ups
+        getRandomExercises('Shoulders', 1, ALL_EXERCISES_LIST)[0] || ALL_EXERCISES_LIST.find(ex => ex.id === 'ex-strength-4')!, // Overhead Press
+        getRandomExercises('Legs', 1, ALL_EXERCISES_LIST)[0] || ALL_EXERCISES_LIST.find(ex => ex.id === 'ex-strength-5')!, // Barbell Squats
+      ].filter(Boolean); // Filter out any undefined if defaults fail
+      planName = `AI Generated: Muscle Gain Focus`;
+      planDescription = 'A plan focused on progressive overload and strength building.';
+      break;
+    case 'circuit training':
+      planExercises = [
+        ...getRandomExercises('Full Body', 2, ALL_EXERCISES_LIST),
+        ...getRandomExercises('Cardio', 2, ALL_EXERCISES_LIST.filter(ex => ex.timeBased)),
+      ];
+      planName = `AI Generated: Circuit Burn`;
+      planDescription = 'High-intensity interval training for maximum calorie burn and conditioning.';
+      break;
+    case 'cardio boost':
+       planExercises = [
+        ...getRandomExercises('Cardio', 3, ALL_EXERCISES_LIST.filter(ex => ex.timeBased)),
+        getRandomExercises('Cardio', 1, ALL_EXERCISES_LIST.filter(ex => !ex.timeBased)),
+      ];
+      planName = `AI Generated: Cardio Endurance`;
+      planDescription = 'Focused cardiovascular exercises to improve stamina and heart health.';
+      break;
+    default: // General Fitness
+      planExercises = [
+        ...getRandomExercises('Full Body', 1, ALL_EXERCISES_LIST),
+        ...getRandomExercises('Legs', 1, ALL_EXERCISES_LIST),
+        ...getRandomExercises('Core', 1, ALL_EXERCISES_LIST),
+        ...getRandomExercises('Cardio', 1, ALL_EXERCISES_LIST),
+      ];
+      planName = `AI Generated: General Fitness`;
+      planDescription = 'A well-rounded plan for overall health and conditioning.';
+      break;
+  }
+  
+  // Ensure unique exercises and limit total number
+  const finalExerciseSet = Array.from(new Set(planExercises.map(ex => ex.id)))
+                             .map(id => getExerciseById(id)!)
+                             .filter(Boolean)
+                             .slice(0, 4); // Max 4 main exercises + warm-up/cool-down
+
+  return {
+    id: `plan-ai-${Date.now()}`,
+    name: planName,
+    goal: goal,
+    description: planDescription,
+    exercises: [warmUp, ...finalExerciseSet, coolDown].filter(Boolean) as Exercise[],
+    duration: "Approx. 45-60 mins",
+    frequency: "3 times a week"
+  };
 }
 
 export async function generatePlanAction(goal: string): Promise<WorkoutPlan | { error: string }> {
@@ -62,12 +94,11 @@ export async function generatePlanAction(goal: string): Promise<WorkoutPlan | { 
     return { error: 'Goal cannot be empty.' };
   }
   try {
-    // Replace with actual AI flow call:
-    // const plan = await import('@/ai/flows/workoutFlow').then(m => m.generateWorkoutPlanFlow({ goal }));
     const plan = await mockGenerateWorkoutPlan(goal);
     return plan;
   } catch (error) {
     console.error('Error generating workout plan:', error);
-    return { error: 'Failed to generate workout plan. Please try again.' };
+    const message = error instanceof Error ? error.message : 'Failed to generate workout plan. Please try again.';
+    return { error: message };
   }
 }

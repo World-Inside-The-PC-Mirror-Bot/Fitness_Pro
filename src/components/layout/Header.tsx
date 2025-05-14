@@ -1,11 +1,10 @@
 
 import Link from 'next/link';
-import { Activity, Calculator, Dumbbell, Flower2, Timer, HomeIcon, LayoutDashboard } from 'lucide-react'; // Flower2 as substitute for Yoga
+import { Activity, Calculator, Dumbbell, Flower2, Timer, HomeIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 const navItems = [
   { href: '/', label: 'Welcome', icon: HomeIcon },
-  { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { href: '/bmi-calculator', label: 'BMI Calculator', icon: Calculator },
   { href: '/workout-plans', label: 'Workout Plans', icon: Dumbbell },
   { href: '/yoga-library', label: 'Yoga Library', icon: Flower2 },

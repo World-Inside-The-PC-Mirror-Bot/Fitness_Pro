@@ -7,18 +7,19 @@ import * as z from 'zod';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Scale, TrendingUp, TrendingDown, CheckCircle2 } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { useToast } from '@/hooks/use-toast';
 
 const formSchema = z.object({
   height: z.preprocess(
     (val) => (typeof val === 'string' ? parseFloat(val) : val),
-    z.number().positive({ message: 'Height must be positive' })
+    z.number().positive({ message: 'Height must be positive' }).min(1, "Height required")
   ),
   weight: z.preprocess(
     (val) => (typeof val === 'string' ? parseFloat(val) : val),
-    z.number().positive({ message: 'Weight must be positive' })
+    z.number().positive({ message: 'Weight must be positive' }).min(1, "Weight required")
   ),
   unit: z.enum(['metric', 'imperial']).default('metric'),
 });
@@ -34,16 +35,21 @@ interface BmiResult {
 
 export default function BmiCalculatorForm() {
   const [bmiResult, setBmiResult] = useState<BmiResult | null>(null);
+  const router = useRouter();
+  const { toast } = useToast();
 
   const {
     register,
     handleSubmit,
     watch,
+    setValue, // Used to set unit value
     formState: { errors },
   } = useForm<BmiFormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       unit: 'metric',
+      height: undefined, // Ensure fields are initially undefined for placeholder
+      weight: undefined,
     },
   });
 
@@ -61,7 +67,12 @@ export default function BmiCalculatorForm() {
     }
 
     if (heightInMeters <= 0 || weightInKg <= 0) {
-        setBmiResult(null); // Or show an error specific to invalid calculation
+        setBmiResult(null); 
+        toast({
+          title: "Invalid Input",
+          description: "Height and weight must be positive values.",
+          variant: "destructive",
+        });
         return;
     }
     
@@ -74,7 +85,7 @@ export default function BmiCalculatorForm() {
 
     if (roundedBmi < 18.5) {
       category = 'Underweight';
-      colorClass = 'text-blue-600';
+      colorClass = 'text-blue-600'; // Using direct color for specific feedback
       icon = TrendingDown;
     } else if (roundedBmi < 24.9) {
       category = 'Normal weight';
@@ -91,16 +102,37 @@ export default function BmiCalculatorForm() {
     }
 
     setBmiResult({ value: roundedBmi, category, colorClass, icon });
+    
+    toast({
+      title: "BMI Calculated!",
+      description: `Your BMI is ${roundedBmi}. Category: ${category}. Redirecting to Workout Plans...`,
+      duration: 3000,
+    });
+
+    setTimeout(() => {
+      router.push('/workout-plans');
+    }, 2500); // Redirect after showing toast
   };
+  
+  const handleUnitChange = (newUnit: 'metric' | 'imperial') => {
+    setValue('unit', newUnit, { shouldValidate: true });
+    // Clear height and weight when unit changes to avoid confusion, or implement conversion
+    setValue('height', undefined);
+    setValue('weight', undefined);
+    setBmiResult(null); // Clear previous result
+  };
+
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
       <div>
-        <Label htmlFor="unit" className="text-base">Unit System</Label>
-        <div className="flex gap-4 mt-2">
-          <Button type="button" variant={unit === 'metric' ? 'default' : 'outline'} onClick={() => register('unit').onChange({ target: { value: 'metric' }})}>Metric (cm, kg)</Button>
-          <Button type="button" variant={unit === 'imperial' ? 'default' : 'outline'} onClick={() => register('unit').onChange({ target: { value: 'imperial' }})}>Imperial (in, lbs)</Button>
+        <Label htmlFor="unit-toggle" className="text-base">Unit System</Label>
+        <div id="unit-toggle" className="flex gap-4 mt-2">
+          <Button type="button" variant={unit === 'metric' ? 'default' : 'outline'} onClick={() => handleUnitChange('metric')}>Metric (cm, kg)</Button>
+          <Button type="button" variant={unit === 'imperial' ? 'default' : 'outline'} onClick={() => handleUnitChange('imperial')}>Imperial (in, lbs)</Button>
         </div>
+        {/* Hidden input for react-hook-form to register the unit */}
+        <input type="hidden" {...register('unit')} />
       </div>
 
       <div>
@@ -130,17 +162,21 @@ export default function BmiCalculatorForm() {
       </div>
 
       <Button type="submit" className="w-full bg-primary hover:bg-primary/90 text-lg py-3">
-        Calculate BMI
+        Calculate BMI &amp; Proceed
       </Button>
 
       {bmiResult && (
-        <Alert variant="default" className={`mt-8 border-l-4 ${bmiResult.colorClass.replace('text-', 'border-')}`}>
+         <Alert variant="default" className={`mt-8 border-l-4 ${
+            bmiResult.category === 'Underweight' ? 'border-blue-500' : 
+            bmiResult.category === 'Normal weight' ? 'border-green-500' :
+            bmiResult.category === 'Overweight' ? 'border-yellow-500' : 'border-red-500'
+          }`}>
           <bmiResult.icon className={`h-6 w-6 ${bmiResult.colorClass}`} />
           <AlertTitle className={`text-xl font-semibold ${bmiResult.colorClass}`}>Your BMI: {bmiResult.value}</AlertTitle>
           <AlertDescription className="text-base">
             Category: <span className="font-medium">{bmiResult.category}</span>
             <p className="text-sm text-muted-foreground mt-2">
-              BMI is a general indicator and may not apply to all individuals, such as athletes or pregnant women. Consult a healthcare professional for personalized advice.
+              BMI is a general indicator. Consult a healthcare professional for personalized advice.
             </p>
           </AlertDescription>
         </Alert>

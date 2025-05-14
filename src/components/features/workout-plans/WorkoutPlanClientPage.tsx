@@ -11,7 +11,6 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Loader2, Wand2, ListChecks } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import {
@@ -19,9 +18,9 @@ import {
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from "@/components/ui/accordion"
+} from "@/components/ui/accordion";
 import { Separator } from '@/components/ui/separator';
-
+import Link from 'next/link';
 
 const formSchema = z.object({
   goal: z.string().min(3, { message: 'Goal must be at least 3 characters long.' }).max(50, { message: 'Goal must be 50 characters or less.' }),
@@ -60,11 +59,15 @@ export default function WorkoutPlanClientPage({ initialPlans }: WorkoutPlanClien
         });
       } else {
         setGeneratedPlan(result);
+        // Add newly generated plan to the top of displayed plans if not already there by name
+        if (!displayedPlans.some(p => p.name === result.name)) {
+            setDisplayedPlans(prevPlans => [result, ...prevPlans]);
+        }
         toast({
           title: 'Workout Plan Generated!',
           description: `Your new plan "${result.name}" is ready.`,
         });
-        reset(); // Clear the form
+        reset(); 
       }
     });
   };
@@ -84,7 +87,7 @@ export default function WorkoutPlanClientPage({ initialPlans }: WorkoutPlanClien
                 id="goal"
                 {...register('goal')}
                 className="mt-1 text-base"
-                placeholder="e.g., Weight loss, Muscle gain, General fitness"
+                placeholder="e.g., Weight loss, Muscle gain, Circuit training"
               />
               {errors.goal && <p className="text-destructive text-sm mt-1">{errors.goal.message}</p>}
             </div>
@@ -101,10 +104,16 @@ export default function WorkoutPlanClientPage({ initialPlans }: WorkoutPlanClien
           <CardHeader>
             <CardTitle className="text-2xl text-primary">{generatedPlan.name}</CardTitle>
             <CardDescription>{generatedPlan.description || `A plan focused on ${generatedPlan.goal}.`}</CardDescription>
+            {generatedPlan.duration && <CardDescription>Duration: {generatedPlan.duration}</CardDescription>}
+            {generatedPlan.frequency && <CardDescription>Frequency: {generatedPlan.frequency}</CardDescription>}
           </CardHeader>
           <CardContent className="space-y-4">
             {generatedPlan.exercises.map((exercise) => (
-              <ExerciseCard key={exercise.id} exercise={exercise} />
+              <Link key={exercise.id} href={`/exercise/${exercise.id}`} passHref legacyBehavior>
+                <a className="block hover:bg-muted/50 rounded-lg transition-colors">
+                  <ExerciseCard exercise={exercise} />
+                </a>
+              </Link>
             ))}
           </CardContent>
         </Card>
@@ -122,10 +131,16 @@ export default function WorkoutPlanClientPage({ initialPlans }: WorkoutPlanClien
                   {plan.name} <span className="text-sm text-muted-foreground ml-2">({plan.goal})</span>
                 </AccordionTrigger>
                 <AccordionContent className="p-6 pt-0">
-                   <p className="text-muted-foreground mb-4">{plan.description}</p>
+                   <p className="text-muted-foreground mb-1">{plan.description}</p>
+                   {plan.duration && <p className="text-sm text-muted-foreground mb-1">Duration: {plan.duration}</p>}
+                   {plan.frequency && <p className="text-sm text-muted-foreground mb-4">Frequency: {plan.frequency}</p>}
                   <div className="space-y-4">
                     {plan.exercises.map((exercise) => (
-                      <ExerciseCard key={exercise.id} exercise={exercise} />
+                       <Link key={exercise.id} href={`/exercise/${exercise.id}`} passHref legacyBehavior>
+                         <a className="block hover:bg-muted/50 rounded-lg transition-colors">
+                           <ExerciseCard exercise={exercise} />
+                         </a>
+                       </Link>
                     ))}
                   </div>
                 </AccordionContent>

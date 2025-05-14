@@ -24,8 +24,8 @@ export default function WelcomePage() {
             Let's get started!
           </p>
           <Button size="lg" className="bg-background text-foreground hover:bg-background/90 text-lg py-3 px-8" asChild>
-            <Link href="/dashboard">
-              Explore Features <ArrowRight className="ml-2 h-5 w-5" />
+            <Link href="/bmi-calculator">
+              Get Started <ArrowRight className="ml-2 h-5 w-5" />
             </Link>
           </Button>
         </div>
@@ -37,7 +37,7 @@ export default function WelcomePage() {
           width={1200}
           height={400}
           className="rounded-lg shadow-lg"
-          data-ai-hint="fitness wellness collage"
+          data-ai-hint="fitness wellness collage people exercising"
         />
       </div>
     </div>
