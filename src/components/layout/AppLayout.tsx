@@ -13,7 +13,7 @@ export function AppLayout({ children }: AppLayoutProps) {
         {children}
       </main>
       <footer className="bg-muted text-muted-foreground py-6 text-center">
-        <p>&copy; {new Date().getFullYear()} FitZenith. All rights reserved.</p>
+        <p>&copy; {new Date().getFullYear()} Fitness Pro. All rights reserved.</p>
       </footer>
     </div>
   );
