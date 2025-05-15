@@ -5,8 +5,8 @@ import { Flower2 } from 'lucide-react';
 import Image from 'next/image';
 
 export const metadata = {
-  title: 'Yoga Library - FitZenith',
-  description: 'Explore various yoga poses and their benefits with FitZenith.',
+  title: 'Yoga Library - Fitness Pro',
+  description: 'Explore various yoga poses and their benefits with Fitness Pro.',
 };
 
 export default function YogaLibraryPage() {

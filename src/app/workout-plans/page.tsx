@@ -5,8 +5,8 @@ import { Dumbbell } from 'lucide-react';
 import Image from 'next/image';
 
 export const metadata = {
-  title: 'Workout Plans - FitZenith',
-  description: 'Generate or browse workout plans tailored to your fitness goals with FitZenith. This is the final step of our guided setup.',
+  title: 'Workout Plans - Fitness Pro',
+  description: 'Generate or browse workout plans tailored to your fitness goals with Fitness Pro. This is the final step of our guided setup.',
 };
 
 export default function WorkoutPlansPage() {

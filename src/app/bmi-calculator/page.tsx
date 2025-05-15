@@ -4,8 +4,8 @@ import { Calculator } from 'lucide-react';
 import Image from 'next/image';
 
 export const metadata = {
-  title: 'BMI Calculator - FitZenith',
-  description: 'Calculate your Body Mass Index (BMI) with FitZenith to start your wellness journey.',
+  title: 'BMI Calculator - Fitness Pro',
+  description: 'Calculate your Body Mass Index (BMI) with Fitness Pro to start your wellness journey.',
 };
 
 export default function BmiCalculatorPage() {

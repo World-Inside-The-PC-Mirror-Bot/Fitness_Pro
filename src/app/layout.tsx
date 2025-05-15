@@ -15,8 +15,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: 'FitZenith - Your Path to Wellness',
-  description: 'Achieve your fitness goals with FitZenith: BMI calculator, workout plans, yoga library, and meditation timer.',
+  title: 'Fitness Pro - Your Path to Wellness',
+  description: 'Achieve your fitness goals with Fitness Pro: BMI calculator, workout plans, yoga library, and meditation timer.',
 };
 
 export default function RootLayout({

@@ -17,7 +17,7 @@ export default function Header() {
       <div className="container flex h-16 items-center justify-between">
         <Link href="/" className="flex items-center gap-2">
           <Activity className="h-6 w-6 text-primary" />
-          <span className="text-xl font-bold text-primary">FitZenith</span>
+          <span className="text-xl font-bold text-primary">Fitness Pro</span>
         </Link>
         <nav className="hidden md:flex items-center space-x-1 lg:space-x-2">
           {navItems.map((item) => (

@@ -4,8 +4,8 @@ import { Brain } from 'lucide-react';
 import Image from 'next/image';
 
 export const metadata = {
-  title: 'Meditation Timer - FitZenith',
-  description: 'Guided meditation timer to help you relax and focus with FitZenith.',
+  title: 'Meditation Timer - Fitness Pro',
+  description: 'Guided meditation timer to help you relax and focus with Fitness Pro.',
 };
 
 export default function MeditationTimerPage() {
