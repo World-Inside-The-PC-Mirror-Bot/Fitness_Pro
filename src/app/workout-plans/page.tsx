@@ -14,16 +14,6 @@ export default function WorkoutPlansPage() {
     <div className="space-y-8">
       <Card className="shadow-xl">
         <CardHeader className="text-center">
-           <div className="flex justify-center items-center mb-4">
-            <Image 
-              src="https://placehold.co/150x100.png" 
-              alt="Fitness equipment" 
-              width={150} 
-              height={100} 
-              className="rounded-md"
-              data-ai-hint="gym equipment fitness" 
-            />
-          </div>
            <div className="flex justify-center items-center mb-2">
             <Dumbbell className="h-10 w-10 text-primary" />
           </div>

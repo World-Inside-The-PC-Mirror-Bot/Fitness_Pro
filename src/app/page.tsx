@@ -30,16 +30,6 @@ export default function WelcomePage() {
           </Button>
         </div>
       </section>
-      <div className="mt-12 w-full max-w-4xl">
-        <Image
-          src="https://placehold.co/1200x400.png"
-          alt="Wellness Journey"
-          width={1200}
-          height={400}
-          className="rounded-lg shadow-lg"
-          data-ai-hint="fitness wellness collage people exercising"
-        />
-      </div>
     </div>
   );
 }

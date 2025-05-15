@@ -13,16 +13,6 @@ export default function MeditationTimerPage() {
     <div className="max-w-2xl mx-auto">
       <Card className="shadow-xl">
          <CardHeader className="text-center">
-            <div className="flex justify-center items-center mb-4">
-            <Image 
-              src="https://placehold.co/150x100.png" 
-              alt="Zen Garden" 
-              width={150} 
-              height={100} 
-              className="rounded-md"
-              data-ai-hint="zen garden meditation" 
-            />
-          </div>
            <div className="flex justify-center items-center mb-2">
             <Brain className="h-10 w-10 text-primary" />
           </div>
